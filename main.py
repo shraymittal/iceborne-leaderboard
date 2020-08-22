@@ -1,3 +1,5 @@
+# Serves database queries to the site
+
 import os
 import time
 

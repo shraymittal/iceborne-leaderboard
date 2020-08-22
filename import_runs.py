@@ -1,3 +1,5 @@
+# This was used to import runs from the old Seiken leaderboard. Shin was kind enough to give me access to all his code
+
 @app.route("/get-runs")
 def get_runs():
     db, username, password, hostname = get_db_creds()

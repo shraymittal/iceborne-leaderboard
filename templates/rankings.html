@@ -133,17 +133,17 @@
               {% if runner != '' %}
               <tr>
                 <td class="fit">{{top10_slugs[runner][1]}}</td>
-                <td data-toggle="collapse" data-target="#quests{{top10_slugs[runner][0]}}" aria-expanded="false" aria-controls="collapseExample">{{runner}}
+                <td data-toggle="collapse" data-target="#quests{{top10_slugs[runner][0]}}" aria-expanded="false" aria-controls="collapseExample"><a href="/runners/{{top10_slugs[runner][0]}}">{{runner}}</a>
                   <div class="collapse" id="quests{{top10_slugs[runner][0]}}">
                     <br />
                     {% for quest_run in quest_ranks[runner][0] %}
-                    <img src="/static/weapon-icon/gold-medal.png" height=25>{{quest_run}}<br />
+                    <img src="/static/weapon-icon/gold-medal.png" height=25><a href="{{quest_run[1]}}" target="_blank">{{quest_run[0]}}</a><br />
                     {% endfor %}
                     {% for quest_run in quest_ranks[runner][1] %}
-                    <img src="/static/weapon-icon/silver-medal.png" height=25>{{quest_run}}<br />
+                    <img src="/static/weapon-icon/silver-medal.png" height=25><a href="{{quest_run[1]}}" target="_blank">{{quest_run[0]}}</a><br />
                     {% endfor %}
                     {% for quest_run in quest_ranks[runner][2] %}
-                    <img src="/static/weapon-icon/bronze-medal.png" height=25>{{quest_run}}<br />
+                    <img src="/static/weapon-icon/bronze-medal.png" height=25><a href="{{quest_run[1]}}" target="_blank">{{quest_run[0]}}</a><br />
                     {% endfor %}
                   </div>
                 </td>

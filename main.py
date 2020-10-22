@@ -898,15 +898,15 @@ def rankings_path(weapon, ruleset, platform):
             if entry[4] != '':
                 if entry[4] not in leaderboard:
                     leaderboard[entry[4]] = [[], [], []]
-                leaderboard[entry[4]][0].append(entry[1] + " - " + entry[0] + " - " + entry[5])
+                leaderboard[entry[4]][0].append([entry[1] + " - " + entry[0] + " - " + entry[5], entry[11]])
             if entry[6] != '':
                 if entry[6] not in leaderboard:
                     leaderboard[entry[6]] = [[], [], []]
-                leaderboard[entry[6]][1].append(entry[1] + " - " + entry[0] + " - " + entry[7])
+                leaderboard[entry[6]][1].append([entry[1] + " - " + entry[0] + " - " + entry[7], entry[12]])
             if entry[8] != '':
                 if entry[8] not in leaderboard:
                     leaderboard[entry[8]] = [[], [], []]
-                leaderboard[entry[8]][2].append(entry[1] + " - " + entry[0] + " - " + entry[9])
+                leaderboard[entry[8]][2].append([entry[1] + " - " + entry[0] + " - " + entry[9], entry[13]])
         
         top10 = []
         top10_medals = {}
@@ -971,7 +971,7 @@ def slug_test():
     return render_template('about.html')
 '''
 
-#@app.route("/import")
+@app.route("/import")
 def import_new_runs():
 
     global cached_paths
@@ -1007,8 +1007,6 @@ def import_new_runs():
                 runner = get_runner(new_run[8]).replace('\'', '\'\'')
             monster = get_quest_monster(new_run[7])['name'].replace('\'', '\'\'')
             quest = get_quest_url(new_run[7]).replace('\'', '\'\'')
-            print(quest)
-            print(new_run[7])
             run_time = new_run[2].replace('\'', '\'\'')
             ruleset = weapons_dict[new_run[5]].replace('\'', '\'\'')
             weapon = weapons_dict[new_run[6]].replace('\'', '\'\'')
@@ -1035,11 +1033,10 @@ def import_new_runs():
                     found = True
             if not found:
                 quest_name = quest[0].replace('\'', '\'\'')
-                print(quest_name)
                 for weapon in weapons:
                     for ruleset in rulesets:
                         for platform in platforms:
-                            cur.execute("INSERT INTO rankings (quest, weapon, ruleset, platform, runner1, time1, runner2, time2, runner3, time3, time_to_beat) VALUES ('%s', '%s', '%s', '%s', '', '', '', '', '', '', '%s')" % (quest_name, weapon, ruleset, platform, ""))
+                            cur.execute("INSERT INTO rankings (quest, weapon, ruleset, platform, runner1, time1, runner2, time2, runner3, time3, time_to_beat, link1, link2, link3) VALUES ('%s', '%s', '%s', '%s', '', '', '', '', '', '', '%s', '', '', '')" % (quest_name, weapon, ruleset, platform, ""))
 
         cur.execute("SELECT * FROM rankings ORDER BY quest")
         rankings = cur.fetchall()
@@ -1068,6 +1065,7 @@ def import_new_runs():
                 if run[0] not in entry_runners and num_runs < 3:
                     entry[4 + num_runs * 2] = run[0].replace('\'', '\'\'')
                     entry[5 + num_runs * 2] = run[3].replace('\'', '\'\'')
+                    entry[11 + num_runs] = run[8]
                     entry_runners.append(run[0])
                     num_runs = num_runs + 1
             
@@ -1078,17 +1076,23 @@ def import_new_runs():
                 entry[7] = ''
                 entry[8] = ''
                 entry[9] = ''
+                entry[11] = ''
+                entry[12] = ''
+                entry[13] = ''
             elif num_runs == 1:
                 entry[6] = ''
                 entry[7] = ''
                 entry[8] = ''
                 entry[9] = ''
+                entry[12] = ''
+                entry[13] = ''
             elif num_runs == 2:
                 entry[8] = ''
                 entry[9] = ''
+                entry[13] = ''
 
             print(entry)
-            cur.execute("UPDATE rankings SET runner1='%s', time1='%s', runner2='%s', time2='%s', runner3='%s', time3='%s' WHERE quest='%s' AND weapon='%s' AND ruleset='%s' AND platform='%s'" % (entry[4], entry[5], entry[6], entry[7], entry[8], entry[9], entry[0].replace('\'', '\'\''), entry[1], entry[2], entry[3]))
+            cur.execute("UPDATE rankings SET runner1='%s', time1='%s', runner2='%s', time2='%s', runner3='%s', time3='%s', link1='%s', link2='%s', link3='%s' WHERE quest='%s' AND weapon='%s' AND ruleset='%s' AND platform='%s'" % (entry[4], entry[5], entry[6], entry[7], entry[8], entry[9], entry[11], entry[12], entry[13], entry[0].replace('\'', '\'\''), entry[1], entry[2], entry[3]))
 
         cnx.commit()
         return home()

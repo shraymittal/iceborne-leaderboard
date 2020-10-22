@@ -964,6 +964,13 @@ def submit():
 def about():
     return render_template('about.html')
 
+'''
+@app.route("/slug-test")
+def slug_test():
+    print(get_quest_url("USJ: Shine On Forever"))
+    return render_template('about.html')
+'''
+
 #@app.route("/import")
 def import_new_runs():
 
@@ -1000,6 +1007,8 @@ def import_new_runs():
                 runner = get_runner(new_run[8]).replace('\'', '\'\'')
             monster = get_quest_monster(new_run[7])['name'].replace('\'', '\'\'')
             quest = get_quest_url(new_run[7]).replace('\'', '\'\'')
+            print(quest)
+            print(new_run[7])
             run_time = new_run[2].replace('\'', '\'\'')
             ruleset = weapons_dict[new_run[5]].replace('\'', '\'\'')
             weapon = weapons_dict[new_run[6]].replace('\'', '\'\'')

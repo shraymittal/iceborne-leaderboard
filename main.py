@@ -971,7 +971,7 @@ def slug_test():
     return render_template('about.html')
 '''
 
-@app.route("/import")
+#@app.route("/import")
 def import_new_runs():
 
     global cached_paths

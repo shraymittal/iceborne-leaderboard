@@ -1107,6 +1107,7 @@ def import_new_runs():
         fastest_times = []
 
         for quest in quests:
+            #if quest[5] >= 100:
             fastest_times.append([quest[0], "Freestyle", -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])
             fastest_times.append([quest[0], "TA Wiki", -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])
 

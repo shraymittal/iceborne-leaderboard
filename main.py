@@ -10,6 +10,7 @@ from mysql.connector import errorcode
 import glob
 from slugify import slugify
 import time
+from datetime import datetime
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 import re
@@ -1020,7 +1021,7 @@ def import_new_runs():
                 cur.execute("UPDATE monsters SET num_runs = num_runs + 1 WHERE name='%s'" % (monster))
 
         cur.execute("DELETE FROM new_runs")
-
+        
         cur.execute("SELECT * FROM rankings ORDER BY quest")
         rankings = cur.fetchall()
         cur.execute("SELECT * FROM quests WHERE num_runs >= 30")
@@ -1093,8 +1094,46 @@ def import_new_runs():
 
             print(entry)
             cur.execute("UPDATE rankings SET runner1='%s', time1='%s', runner2='%s', time2='%s', runner3='%s', time3='%s', link1='%s', link2='%s', link3='%s' WHERE quest='%s' AND weapon='%s' AND ruleset='%s' AND platform='%s'" % (entry[4], entry[5], entry[6], entry[7], entry[8], entry[9], entry[11], entry[12], entry[13], entry[0].replace('\'', '\'\''), entry[1], entry[2], entry[3]))
+        
+        cnx.commit()
+
+        cur.execute("SELECT * FROM runs ORDER BY time")
+        runs = cur.fetchall()
+
+        cur.execute("SELECT * FROM quests ORDER BY name")
+        quests = cur.fetchall()
+
+        global weapons
+        
+
+        #fastest_times = ["Quest", "Ruleset", "Bow", "Charge Blade", "Dual Blades", "Great Sword", "Gunlance", "Hammer", "Heavy Bowgun", "Hunting Horn", "Insect Glaive", "Lance", "Light Bowgun", "Long Sword", "Switch Axe", "Sword & Shield"]
+        fastest_times = []
+
+        for quest in quests:
+            fastest_times.append([quest[0], "Freestyle", -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])
+            fastest_times.append([quest[0], "TA Wiki", -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])
+
+        for category in fastest_times:
+            weapon_index = 2
+            quest_url = get_quest_url(category[0])
+            for weapon in weapons:
+                for run in runs:
+                    if quest_url == run[2] and weapons_dict[weapon] == run[5]:
+                        if category[1] == "Freestyle" or run[4] == "ta-wiki-rules":
+                            test_time = datetime.strptime(run[3], "%M'%S" + '"%f')
+                            category[weapon_index] = test_time.minute * 60 + test_time.second + test_time.microsecond / 1000000
+                            break
+                weapon_index += 1
+
+
+        cur.execute("DELETE FROM tier_list")
+
+        for category in fastest_times:
+            if -1 not in category:
+                cur.execute("INSERT INTO tier_list (quest, ruleset, bow, charge_blade, dual_blades, great_sword, gunlance, hammer, heavy_bowgun, hunting_horn, insect_glaive, lance, light_bowgun, long_sword, switch_axe, sword_and_shield) VALUES ('%s', '%s', %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)" % (category[0].replace("'", "''"), category[1], category[2], category[3], category[4], category[5], category[6], category[7], category[8], category[9], category[10], category[11], category[12], category[13], category[14], category[15]))
 
         cnx.commit()
+
         return home()
 
 def clean_urls():

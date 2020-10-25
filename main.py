@@ -73,6 +73,8 @@ weapons_dict['ta-wiki-rules'] = 'TA Wiki'
 
 cached_paths = {}
 
+app = Flask(__name__, static_url_path='')
+
 def get_db_creds():
     db = config.db
     username = config.username
@@ -964,6 +966,10 @@ def submit():
 @app.route("/about")
 def about():
     return render_template('about.html')
+
+@app.route("/ads.txt")
+def ads_txt():
+    return app.send_static_file('ads.txt')
 
 '''
 @app.route("/slug-test")

@@ -210,9 +210,9 @@ data-full-width-responsive="true"></ins>
                 {% for wpn in wpn_summaries %}
                   <tr>
                     <td><img src="/static/weapon-icon/{{wpn}}.png" alt="{{wpn}}" height=25></td>
-                    <td>{{wpn_summaries[wpn][0]}}</td>
-                    <td>{{wpn_summaries[wpn][1]}}</td>
-                    <td>{{wpn_summaries[wpn][2]}}</td>
+                    {% for summary_run in wpn_summaries[wpn] %}
+                    <td>{% if summary_run=='-' %}-{% else %}<a href="{{summary_run[1]}}" target="_blank">{{summary_run[0]}}</a><br /><a href="/runners/{{summary_run[3]}}">{{summary_run[2]}}</a>{% endif %}</td>
+                    {% endfor %}
                   </tr>
                 {% endfor %}
               </tbody>

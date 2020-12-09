@@ -543,9 +543,37 @@ def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform, **kwargs):
 
     global cached_paths
 
+    global weapons_dict
+    global weapons
+
     if (tbl_summary):
         summary_path = "/quests/" + quest_url + "/" + tbl_ruleset + "/" + tbl_platform + "/summary"
-        print(summary_path)
+        weapons_summaries = {}
+        if (summary_path not in cached_paths or time.time() - cachced_paths[summary_path][0] > 1800):
+            quest = get_quest(quest_url)
+            quest_monster = get_quest_monster(quest)
+            for wpn in weapons:
+                wpn_slug = weapons_dict[wpn]
+                place = 0
+                weapons_summaries[wpn_slug] = ["-", "-", "-"]
+                unique_runners = []
+                for run in runs:
+                    if (place > 2):
+                        break
+                    if (run[0] not in unique_runners) and run[2] == quest_url and run[5] == wpn_slug and (tbl_ruleset == 'freestyle' or run[4] == 'ta-wiki-rules') and ((tbl_platform == 'all') or (tbl_platform == 'pc' and run[6] == 'pc') or (tbl_platform == 'ps4' and run[6] == 'ps4') or (tbl_platform == 'xbox' and run[6] == 'xbox') or (tbl_platform =='console' and (run[6] == 'ps4' or run[6] == 'xbox'))):
+                        runner = run[0]
+                        runner_url = get_runner_url(runner)
+                        unique_runners.append(runner)
+                        print(unique_runners)
+                        run_time = run[3]
+                        link = run[8]
+                        weapons_summaries[wpn_slug][place] = (run_time, link, runner, runner_url)
+                        place += 1
+            cached_paths[summary_path] = (time.time(), weapons_summaries, quest, quest_monster)
+        else:
+            weapons_summaries = cached_paths[summary_path][1]
+        return render_template('quests.html', questList=False, quest_url=quest_url, weapon=tbl_weapon, ruleset=tbl_ruleset, platform=tbl_platform, quest_name=quest, monster=quest_monster, weapon_name=weapons_dict[tbl_weapon], quest_tbl_summary=tbl_summary, wpn_summaries=weapons_summaries)
+
 
     if (request.path not in cached_paths or time.time() - cached_paths[request.path][0] > 1800):
         quest = get_quest(quest_url)
@@ -578,15 +606,8 @@ def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform, **kwargs):
         quest_runs = cached_paths[request.path][1]
         quest = cached_paths[request.path][2]
         quest_monster = cached_paths[request.path][3]
-    
-    global weapons_dict
 
-    weapons_summaries = {
-        "bow": ("1st", "2nd", "3rd"),
-        "charge-blade": ("1st", "2nd", "3rd")
-    }
-
-    return render_template('quests.html', questList=False, runs=quest_runs, quest_url=quest_url, weapon=tbl_weapon, ruleset=tbl_ruleset, platform=tbl_platform, quest_name=quest, monster=quest_monster, weapon_name=weapons_dict[tbl_weapon], quest_tbl_summary=tbl_summary, wpn_summaries=weapons_summaries)
+    return render_template('quests.html', questList=False, runs=quest_runs, quest_url=quest_url, weapon=tbl_weapon, ruleset=tbl_ruleset, platform=tbl_platform, quest_name=quest, monster=quest_monster, weapon_name=weapons_dict[tbl_weapon], quest_tbl_summary=tbl_summary)
 
 @app.route("/quests/<quest_url>/<tbl_weapon>/<tbl_ruleset>/<tbl_platform>/summary")
 def quest_summary(quest_url, tbl_weapon, tbl_ruleset, tbl_platform):

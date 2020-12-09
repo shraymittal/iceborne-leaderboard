@@ -162,61 +162,93 @@ data-full-width-responsive="true"></ins>
           </div>
           <div class="btn-group btn-group-toggle ml-3" data-toggle="buttons">
             <label class="btn btn-primary active">
-              <input type="radio" name="options" id="option1" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/freestyle/{{platform}}';" {% if ruleset=='freestyle' %}checked{% endif %}>Freestyle
+              <input type="radio" name="options" id="option1" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/freestyle/{{platform}}{% if quest_tbl_summary %}/summary{% endif %}';" {% if ruleset=='freestyle' %}checked{% endif %}>Freestyle
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/ta-wiki-rules/{{platform}}';"{% if ruleset=='ta-wiki-rules' %}checked{% endif %}>TA
+              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/ta-wiki-rules/{{platform}}{% if quest_tbl_summary %}/summary{% endif %}';"{% if ruleset=='ta-wiki-rules' %}checked{% endif %}>TA
             </label>
           </div>
           <div class="btn-group btn-group-toggle ml-3" data-toggle="buttons">
             <label class="btn btn-primary active">
-              <input type="radio" name="options" id="option1" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/all';" {% if platform=='all' %}checked{% endif %}>All
+              <input type="radio" name="options" id="option1" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/all{% if quest_tbl_summary %}/summary{% endif %}';" {% if platform=='all' %}checked{% endif %}>All
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/console';"{% if platform=='console' %}checked{% endif %}>Console
+              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/console{% if quest_tbl_summary %}/summary{% endif %}';"{% if platform=='console' %}checked{% endif %}>Console
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/pc';"{% if platform=='pc' %}checked{% endif %}>PC
+              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/pc{% if quest_tbl_summary %}/summary{% endif %}';"{% if platform=='pc' %}checked{% endif %}>PC
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/ps4';"{% if platform=='ps4' %}checked{% endif %}>PS4
+              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/ps4{% if quest_tbl_summary %}/summary{% endif %}';"{% if platform=='ps4' %}checked{% endif %}>PS4
             </label>
             <label class="btn btn-primary">
-              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/xbox';"{% if platform=='xbox' %}checked{% endif %}>Xbox
+              <input type="radio" name="options" id="option2" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/xbox{% if quest_tbl_summary %}/summary{% endif %}';"{% if platform=='xbox' %}checked{% endif %}>Xbox
+            </label>
+          </div>
+          <div class="btn-group btn-group-toggle ml-3" data-toggle="buttons">
+            <label class="btn btn-primary">
+              <input type="radio" name="options" id="option1" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/{{platform}}';"{% if not quest_tbl_summary %}checked{% endif %}>List
+            </label>
+            <label class="btn btn-primary">
+              <input type="radio" name="options" id="option1" autocomplete="off" onclick="location.href='/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/{{platform}}/summary';"{% if quest_tbl_summary %}checked{% endif %}>Summary
             </label>
           </div>
         </div>
         <br />
-        <div class="mr-5 ml-5">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th scope="col">Runner</th>
-                <th scope="col">Time</th>
-                <th scope="col">Weapon</th>
-                <th scope="col">Platform</th>
-                <th scope="col">Ruleset</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for run in runs %}
-              <tr>
-                <td><a href="/runners/{{run.runner_url}}">{{run.runner}}</a></td>
-                <td><a href="{{run.link}}" target="_blank">{{run.time}}</a></td>
-                <td><a href="/quests/{{quest_url}}/{{run.weapon}}/{{ruleset}}/{{platform}}"><img src="/static/weapon-icon/{{run.weapon}}.png" alt="{{run.weapon}}" height=25></a></td>
-                <td><a href="/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/{{run.platform_url}}">{{run.platform}}</a></td>
-                <td>{% if run.ruleset == 'Freestyle' %}
-                  <a href="/quests/{{quest_url}}/{{weapon}}/freestyle/{{platform}}">{{run.ruleset}}</a>
-                  {% else %}
-                  <a href="/quests/{{quest_url}}/{{weapon}}/ta-wiki-rules/{{platform}}">{{run.ruleset}}</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        {% if quest_tbl_summary %}
+          <div class="mr-5 ml-5">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Weapon</th>
+                  <th scope="col"><img src="/static/weapon-icon/gold-medal.png" height=25></th>
+                  <th scope="col"><img src="/static/weapon-icon/silver-medal.png" height=25></th>
+                  <th scope="col"><img src="/static/weapon-icon/bronze-medal.png" height=25></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for wpn in wpn_summaries %}
+                  <tr>
+                    <td><img src="/static/weapon-icon/{{wpn}}.png" alt="{{wpn}}" height=25></td>
+                    <td>{{wpn_summaries[wpn][0]}}</td>
+                    <td>{{wpn_summaries[wpn][1]}}</td>
+                    <td>{{wpn_summaries[wpn][2]}}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="mr-5 ml-5">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Runner</th>
+                  <th scope="col">Time</th>
+                  <th scope="col">Weapon</th>
+                  <th scope="col">Platform</th>
+                  <th scope="col">Ruleset</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for run in runs %}
+                <tr>
+                  <td><a href="/runners/{{run.runner_url}}">{{run.runner}}</a></td>
+                  <td><a href="{{run.link}}" target="_blank">{{run.time}}</a></td>
+                  <td><a href="/quests/{{quest_url}}/{{run.weapon}}/{{ruleset}}/{{platform}}"><img src="/static/weapon-icon/{{run.weapon}}.png" alt="{{run.weapon}}" height=25></a></td>
+                  <td><a href="/quests/{{quest_url}}/{{weapon}}/{{ruleset}}/{{run.platform_url}}">{{run.platform}}</a></td>
+                  <td>{% if run.ruleset == 'Freestyle' %}
+                    <a href="/quests/{{quest_url}}/{{weapon}}/freestyle/{{platform}}">{{run.ruleset}}</a>
+                    {% else %}
+                    <a href="/quests/{{quest_url}}/{{weapon}}/ta-wiki-rules/{{platform}}">{{run.ruleset}}</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
       {% endif %}
       <!-- Bottom of Page -->
 <br />

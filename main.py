@@ -73,7 +73,7 @@ weapons_dict['ta-wiki-rules'] = 'TA Wiki'
 
 cached_paths = {}
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='/static')
 
 def get_db_creds():
     db = config.db
@@ -463,7 +463,8 @@ def quests_list():
     return render_template('quests.html', questlist=True, six_star=quest_dict['six_star'], five_star=quest_dict['five_star'], four_star=quest_dict['four_star'], three_star=quest_dict['three_star'], two_star=quest_dict['two_star'], one_star=quest_dict['one_star'])
 
 @app.route("/quests/<quest_url>/<tbl_weapon>/<tbl_ruleset>/<tbl_platform>")
-def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform):
+def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform, **kwargs):
+    tbl_summary = kwargs.get('tbl_summary', False)
     global runs
     global runs_time
     if not runs or time.time() - runs_time > 1800:
@@ -542,6 +543,10 @@ def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform):
 
     global cached_paths
 
+    if (tbl_summary):
+        summary_path = "/quests/" + quest_url + "/" + tbl_ruleset + "/" + tbl_platform + "/summary"
+        print(summary_path)
+
     if (request.path not in cached_paths or time.time() - cached_paths[request.path][0] > 1800):
         quest = get_quest(quest_url)
         quest_monster = get_quest_monster(quest)
@@ -576,7 +581,16 @@ def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform):
     
     global weapons_dict
 
-    return render_template('quests.html', questList=False, runs=quest_runs, quest_url=quest_url, weapon=tbl_weapon, ruleset=tbl_ruleset, platform=tbl_platform, quest_name=quest, monster=quest_monster, weapon_name=weapons_dict[tbl_weapon])
+    weapons_summaries = {
+        "bow": ("1st", "2nd", "3rd"),
+        "charge-blade": ("1st", "2nd", "3rd")
+    }
+
+    return render_template('quests.html', questList=False, runs=quest_runs, quest_url=quest_url, weapon=tbl_weapon, ruleset=tbl_ruleset, platform=tbl_platform, quest_name=quest, monster=quest_monster, weapon_name=weapons_dict[tbl_weapon], quest_tbl_summary=tbl_summary, wpn_summaries=weapons_summaries)
+
+@app.route("/quests/<quest_url>/<tbl_weapon>/<tbl_ruleset>/<tbl_platform>/summary")
+def quest_summary(quest_url, tbl_weapon, tbl_ruleset, tbl_platform):
+    return quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform, tbl_summary=True)
 
 @app.route("/runners")
 def runners_list():

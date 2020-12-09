@@ -572,6 +572,8 @@ def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform, **kwargs):
             cached_paths[summary_path] = (time.time(), weapons_summaries, quest, quest_monster)
         else:
             weapons_summaries = cached_paths[summary_path][1]
+            quest = cached_paths[summary_path][2]
+            quest_monster = cached_paths[summary_path][3]
         return render_template('quests.html', questList=False, quest_url=quest_url, weapon=tbl_weapon, ruleset=tbl_ruleset, platform=tbl_platform, quest_name=quest, monster=quest_monster, weapon_name=weapons_dict[tbl_weapon], quest_tbl_summary=tbl_summary, wpn_summaries=weapons_summaries)
 
 

@@ -549,7 +549,7 @@ def quest_page(quest_url, tbl_weapon, tbl_ruleset, tbl_platform, **kwargs):
     if (tbl_summary):
         summary_path = "/quests/" + quest_url + "/" + tbl_ruleset + "/" + tbl_platform + "/summary"
         weapons_summaries = {}
-        if (summary_path not in cached_paths or time.time() - cachced_paths[summary_path][0] > 1800):
+        if (summary_path not in cached_paths or time.time() - cached_paths[summary_path][0] > 1800):
             quest = get_quest(quest_url)
             quest_monster = get_quest_monster(quest)
             for wpn in weapons:
